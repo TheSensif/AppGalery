@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        Button button = findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
+        Button bGalery = findViewById(R.id.bGalery);
+        bGalery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //Create Intent
@@ -47,6 +47,14 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
                 //Launch activity to get result
                 someActivityResultLauncher.launch(intent);
+            }
+        });
+
+        Button bCamera = findViewById(R.id.bCamera);
+        bCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
     }
