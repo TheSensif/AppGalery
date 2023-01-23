@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -27,6 +28,7 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
     ImageView imageView;
     String currentPhotoPath;
+    Uri photoURI;
     public static int RC_PHOTO_PICKER = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +68,7 @@ public class MainActivity extends AppCompatActivity {
                 new ActivityResultCallback<ActivityResult>() {
                     @Override
                     public void onActivityResult(ActivityResult result) {
-                        Intent data = result.getData();
-                        Bundle extras = data.getExtras();
-                        Bitmap imageBitmap = (Bitmap) extras.get("data");
-                        imageView.setImageBitmap(imageBitmap);
+                        imageView.setImageURI(photoURI );
 
                     }
                 });
@@ -83,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 // Ensure that there's a camera activity to handle the intent
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+
                     // Create the File where the photo should go
                     File photoFile = null;
                     try {
@@ -93,31 +92,35 @@ public class MainActivity extends AppCompatActivity {
                     }
                     // Continue only if the File was successfully created
                     if (photoFile != null) {
-                        Uri photoURI = FileProvider.getUriForFile(MainActivity.this,
+                        photoURI = FileProvider.getUriForFile(MainActivity.this,
                                 "com.thesensif.appgalery.fileprovider",
                                 photoFile);
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
                         cameraActivityResultLauncher.launch(takePictureIntent);
                     }
-                }
+
+
 
             }
-            private File createImageFile() throws IOException {
-                // Create an image file name
-                String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-                String imageFileName = "JPEG_" + timeStamp + "_";
-                File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-                File image = File.createTempFile(
-                        imageFileName,  /* prefix */
-                        ".jpg",         /* suffix */
-                        storageDir      /* directory */
-                );
 
-                // Save a file: path for use with ACTION_VIEW intents
-                currentPhotoPath = image.getAbsolutePath();
-                return image;
-            }
         });
     }
 
+    @NonNull
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = image.getAbsolutePath();
+        System.out.println(currentPhotoPath);
+        return image;
+    }
 }
